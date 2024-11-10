@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@SuppressWarnings("unused")
-@NoArgsConstructor
 public class LinkedList<T> {
 
     @Data
@@ -28,6 +26,12 @@ public class LinkedList<T> {
     private int size;
     private Node<T> first;
     private Node<T> last;
+
+    public LinkedList() {
+        this.size = 0;
+        this.first = new Node<>();
+        this.last = new Node<>();
+    }
 
     public java.lang.Object[] toArray() {
 
@@ -56,7 +60,7 @@ public class LinkedList<T> {
 
     /**
      * Searches index of the object
-     * 
+     *
      * @return -1 - If the object does not exist
      */
     public int indexOf(java.lang.Object obj) {
@@ -71,7 +75,7 @@ public class LinkedList<T> {
 
     /**
      * Add the item into the last position
-     * 
+     *
      * @param e
      */
     public void addLast(T e) {
@@ -112,8 +116,8 @@ public class LinkedList<T> {
 
         final T item = this.first.item;
         final Node<T> next = first.getNext();
-
-        next.setPrev(null);
+        if (next != null)
+            next.setPrev(null);
         this.first = next;
         --size;
         return item;
@@ -125,8 +129,8 @@ public class LinkedList<T> {
 
         final T item = this.last.item;
         final Node<T> prev = last.getPrev();
-
-        prev.setPrev(null);
+        if (prev != null)
+            prev.setPrev(null);
         this.last = prev;
         --size;
         return item;
@@ -138,6 +142,7 @@ public class LinkedList<T> {
 
         if (first.getItem() == null) {
             first.item = item;
+            ++size;
             return;
         }
 
@@ -158,7 +163,7 @@ public class LinkedList<T> {
         isFirstNull();
 
         Node<T> temp = first;
-        for (int j = 0; temp != last; temp = temp.getNext(), j++)
+        for (int j = 0; j < this.size; j++, temp = temp.getNext())
             if (j == i)
                 return temp.getItem();
 
@@ -171,14 +176,15 @@ public class LinkedList<T> {
         isFirstNull();
 
         Node<T> temp = first;
-        for (int j = 0; temp != last; temp = temp.getNext(), j++)
+        for (int j = 0; j < this.size; temp = temp.getNext(), j++)
             if (j == i) {
                 final T item = temp.item;
                 final Node<T> next = temp.getNext();
                 final Node<T> prev = temp.getPrev();
-                temp = null;
-                next.setPrev(prev);
-                prev.setNext(next);
+                if (next != null)
+                    next.setPrev(prev);
+                if (prev != null)
+                    prev.setNext(next);
                 --size;
                 return item;
             }
@@ -186,15 +192,25 @@ public class LinkedList<T> {
     }
 
     public void push(T item) {
+
         if (first.getItem() == null) {
             first.item = item;
+            last = first;
+            ++size;
             return;
         }
+
         Node<T> temp = first;
 
         while (true) {
             if (temp.getNext() == null) {
-                temp.getNext().setItem(item);
+                final Node<T> next = new Node<>(temp, null);
+                next.setItem(item);
+                last = next;
+                temp.setNext(next);
+                ++size;
+                if (first.getNext() == null)
+                    last.setPrev(first);
                 return;
             }
             temp = temp.getNext();

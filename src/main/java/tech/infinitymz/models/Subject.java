@@ -9,17 +9,16 @@ import tech.infinitymz.exceptions.NumberLimitExceededException;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Subject {
 
     private String name;
     private double numberOfCredits;
     private SubjectPriority priority;
     private int semester;
-    final private Topics[] topics = new Topics[4];
+    final private Topics[] topics;
 
     /**
-     * 
+     *
      * @param name - Subject name
      * @throws CharacterLimitExceededException - If the name has more than 60
      *                                         characters

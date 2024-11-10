@@ -8,12 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileBuffer {
-    public final static String RESOURCE_PATH = ".\\resource\\";
+    public final static String RESOURCE_PATH = "resource";
     public final static String COMMANDS_FILE = "commands.json";
 
     /**
      * Creates a file, nothing else to say LOL
-     * 
+     *
      * @param fileName    The name of the file
      * @param fileContent The content that have to be put IN THE FILE
      * @param filePath    The path to create the file
@@ -30,7 +30,7 @@ public class FileBuffer {
 
     /**
      * Creates an object containing the path that you want to access
-     * 
+     *
      * @param path The Path to access
      * @return filePath object
      */
@@ -43,24 +43,21 @@ public class FileBuffer {
 
     /**
      * Returns a FileReader object
-     * 
+     *
      * @param filePath Path of the file
      * @param fileName Name of the file
      * @return FileReader object
+     * @throws FileNotFoundException
      */
-    private static FileReader getFileReader(File filePath, String fileName) {
+    private static FileReader getFileReader(File filePath, String fileName) throws FileNotFoundException {
         FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(filePath + fileName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        fileReader = new FileReader(filePath + fileName);
         return fileReader;
     }
 
     /**
      * Returns a object that reads a file, line by line (BufferedReader)
-     * 
+     *
      * @param fileReader fileReader Object
      * @return buffered reader object
      */
@@ -73,10 +70,11 @@ public class FileBuffer {
      * string
      *
      * @return the line in String type
+     * @throws FileNotFoundException
      * @see #loadAndReadFile
      */
-    public static String readFile(File userPath, String fileName) {
-        final String fileSeparator = "\\";
+    public static String readFile(File userPath, String fileName) throws FileNotFoundException {
+        final String fileSeparator = "/";
         String file = fileSeparator + fileName;
 
         final FileReader fileReader = getFileReader(userPath, file);

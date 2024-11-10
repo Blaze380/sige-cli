@@ -1,50 +1,43 @@
 package tech.infinitymz.services;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 
-import com.google.gson.Gson;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
-import tech.infinitymz.lib.collections.LinkedList;
-import tech.infinitymz.lib.utils.FileBuffer;
-import tech.infinitymz.lib.utils.LineReader;
-import tech.infinitymz.models.Command;
+import tech.infinitymz.lib.utils.LinePrinter;
+import tech.infinitymz.lib.utils.Terminal;
 
 public class CLIService {
 
-    private LineReader cml;
-    private Command commands[];
-
     public CLIService() {
-        System.out.println("Seja Bem-vindo ao Sistema de Gestão Acadêmico!");
-        // initCommands();
+        AnsiConsole.systemInstall();
+        System.out.println("Seja Bem-vindo ao Sistema de Gestao Academico!");
         initComponents();
     }
 
     private void initComponents() {
-        cml = new LineReader();
+        loadCommands();
         CommandLine();
-
     }
 
     private void CommandLine() {
-        LinkedList<String> ls = new LinkedList<>();
-
-        String[] b = new String[] { "sdfsd", "sfsdf" };
-        String a = "";
+        String cmd = null;
         while (true) {
-            System.out.print("Creator@bash: ~ $ ");
-            a = cml.readString();
-            ls.addLast(a);
-            if (a.equals("semantica"))
-                ls.add(2, a);
+            cmd = Terminal.readLine();
+            SyntaxCheckerService.eval(cmd);
         }
+
     }
 
-    private void initCommands() {
-        File file = FileBuffer.createDirectoryPath(FileBuffer.RESOURCE_PATH);
-        String content = FileBuffer.readFile(file, FileBuffer.COMMANDS_FILE);
-        commands = (Command[]) new Gson().fromJson(content, Command[].class);
-
+    private void loadCommands() {
+        try {
+            SyntaxCheckerService.loadCommands();
+        } catch (FileNotFoundException e) {
+            LinePrinter.print(Ansi.ansi().bgYellow().fgBrightBlack().a(" AVISO!").reset());
+            LinePrinter.println(
+                    " Os comando não foram carregados, qualquer comando que for inserido incorretamente irá danificar o sistema!");
+        }
     }
 
 }

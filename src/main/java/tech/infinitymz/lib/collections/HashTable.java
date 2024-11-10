@@ -1,48 +1,57 @@
 package tech.infinitymz.lib.collections;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * LinkedList
  */
 @SuppressWarnings({ "unused", "unchecked" })
-public class HashTable {
-    @AllArgsConstructor
+public class HashTable<K, E> {
+    // @AllArgsConstructor
     @Getter
-    private class Entry<T, V> {
+    public class Entry<T, V> {
         final private T key;
         private V value;
 
+        public <J, M> Entry(J key, M value) {
+            this.key = (T) key;
+            this.value = (V) value;
+        }
+
         public static <K> int hashCode(K key, int size) {
-            int hash = Math.abs(genHash(key, size));
+            int hash = generateHash(key, size);
             double logic = (Math.sqrt(5) - 1) / 2;
             return (int) Math.floor(size * ((logic * hash) % 1));
         }
 
-        private static <K> int genHash(K key, int size) {
+        private static <K> int generateHash(K key, int size) {
             int i = 0;
             if (key instanceof Integer)
                 return (int) key;
             if (key instanceof Double) {
                 i = (int) key / 1;
                 i += (int) key % 1;
-                return i;
+                return Math.abs(i);
             }
+            // If the key is null, it will transform into string, say "NO" to exception!!!
+            String instance = (String) key;
             if (key instanceof String) {
-                for (int j = 0; j < ((String) key).length(); i++) {
-                    j += ((String) key).charAt(i) * Math.pow(size, j);
+                for (int j = 0; j < instance.length(); i++) {
+                    j += instance.charAt(i) * Math.pow(size, j);
                     return j;
                 }
             }
             return -1;
         }
+
     }
 
     private final double LOAD_FACTOR = 0.75;
-    private LinkedList<Entry<?, ?>>[] buckets;
+    private LinkedList<Entry<K, E>>[] buckets;
     private int capacity, occupiedCapacity;
 
     public HashTable() {
@@ -50,59 +59,93 @@ public class HashTable {
     }
 
     private void initMap(int capacity) {
-        capacity = capacity > 0 ? capacity : 11;
+        this.capacity = capacity > 0 ? capacity : 11;
         occupiedCapacity = 0;
-        buckets = new LinkedList[capacity];
+        buckets = new LinkedList[this.capacity];
     }
 
     private void rehash() {
         if (occupiedCapacity < capacity * LOAD_FACTOR)
             return;
-        capacity = (capacity << 1) + 1;
-        LinkedList<Entry<?, ?>>[] oldBucket = buckets;
-        buckets = new LinkedList[capacity];
-        for (int i = occupiedCapacity; i < occupiedCapacity; i++)
-            for (int j = 0; j < oldBucket[i].size(); j++)
-                buckets[i].push(oldBucket[i].pop());
+        this.capacity = (capacity << 1) + 1;
+        LinkedList<Entry<K, E>>[] oldBucket = buckets;
+        this.buckets = new LinkedList[capacity];
+        this.occupiedCapacity = 0;
+        Entry<K, E> entry = null;
+        for (LinkedList<Entry<K, E>> old : oldBucket)
+            if (old != null)
+                for (int j = 0, hashIndex = 0; j < old.size(); j++) {
+                    entry = old.pop();
+                    hashIndex = Entry.hashCode(entry.getKey(), this.capacity);
+                    if (buckets[hashIndex] == null) {
+                        ++occupiedCapacity;
+                        buckets[hashIndex] = new LinkedList<>();
+                    }
+                    buckets[hashIndex].push(entry);
+                }
 
     }
 
-    public <K, V> void add(K key, V value) {
+    public <T, V> void add(T key, V value) {
 
         rehash();
-        var item = new Entry<>(key, value);
+        Entry<K, E> item = new Entry<K, E>(key, value);
         int hashIndex = Entry.hashCode(key, capacity);
-        if (buckets[hashIndex] == null)
+        if (buckets[hashIndex] == null) {
+            ++occupiedCapacity;
             buckets[hashIndex] = new LinkedList<>();
+        }
         buckets[hashIndex].push(item);
     }
 
-    public <K> Entry<?, ?> remove(K key) {
+    @SuppressWarnings("unlikely-arg-type")
+    public <T, G> Entry<K, E> remove(T key) {
         if (find(key) == null)
             throw new NoSuchElementException();
 
         int hashIndex = Entry.hashCode(key, capacity);
+        Entry<K, E> temp = null;
 
-        Entry<?, ?> temp = null;
         for (int i = 0; i < buckets[hashIndex].size(); i++)
             if (buckets[hashIndex].get(i).getKey().equals(key)) {
-                temp = buckets[hashIndex].get(i);
-                // buckets[hashIndex].
+                temp = buckets[hashIndex].remove(i);
                 return temp;
             }
         throw new IllegalStateException("Could not remove any item");
     }
 
-    public <K> Entry<?, ?> find(K key) {
+    @SuppressWarnings("unlikely-arg-type")
+    public <T> Entry<K, E> find(T key) {
         int hashIndex = Entry.hashCode(key, capacity);
         if (buckets[hashIndex] == null)
             return null;
-        Entry<?, ?> temp = null;
-        for (int i = 0; i < buckets[hashIndex].size(); i++, temp = buckets[hashIndex].get(i))
+        Entry<K, E> temp = null;
+        for (int i = 0; i < buckets[hashIndex].size(); i++) {
+            temp = buckets[hashIndex].get(i);
             if (temp != null)
                 if (temp.getKey().equals(key))
                     return temp;
+        }
 
         return null;
+    }
+
+    public List<E> getValues() {
+        List<E> values = new ArrayList<>();
+        for (LinkedList<Entry<K, E>> bucket : buckets)
+            if (bucket != null)
+                for (int i = 0; i < bucket.size(); i++)
+                    values.add(bucket.get(i).getValue());
+        return values;
+    }
+
+    public List<K> getKeys() {
+        List<K> keys = new ArrayList<>();
+        for (LinkedList<Entry<K, E>> bucket : buckets)
+            if (bucket != null)
+                for (int i = 0; i < bucket.size(); i++)
+                    keys.add(bucket.get(i).getKey());
+
+        return keys;
     }
 }

@@ -12,10 +12,11 @@ public class Command {
     private String description;
     private Argument args[];
 
-}
+    @Data
+    public class Argument {
+        private String name;
+        private String argRegex;
+        private String description;
+    }
 
-@Data
-class Argument {
-    private String name;
-    private String description;
 }
