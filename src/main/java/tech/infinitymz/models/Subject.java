@@ -2,7 +2,6 @@ package tech.infinitymz.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import tech.infinitymz.enums.SubjectPriority;
 import tech.infinitymz.exceptions.CharacterLimitExceededException;
 import tech.infinitymz.exceptions.NumberLimitExceededException;

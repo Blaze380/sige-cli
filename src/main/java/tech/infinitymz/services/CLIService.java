@@ -12,7 +12,7 @@ public class CLIService {
 
     public CLIService() {
         AnsiConsole.systemInstall();
-        System.out.println("Seja Bem-vindo ao Sistema de Gestao Academico!");
+        LinePrinter.println("Seja Bem-vindo ao Sistema de Gestao Academico!");
         initComponents();
     }
 

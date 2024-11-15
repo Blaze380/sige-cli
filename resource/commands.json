@@ -1,107 +1,107 @@
 [
   {
     "prefix": "CC",
-    "description": null,
+    "description": "Permite a criação de cursos.",
     "args": [
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "RC",
-    "description": "A remoção do curso implica que as disciplinas pertencentes APENAS ao plano curricular do mesmo, devem ser removidas",
+    "description": "A remocao do curso implica que as disciplinas pertencentes APENAS ao plano curricular do mesmo, devem ser removidas",
     "args": [
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "CD",
-    "description": null,
+    "description": "A criacao de uma disciplina com numero de creditos associada a sequencia de quatro topicos distinto. Adicionalmente insercao da prioridade da disciplina 1(obrigatorio) ou 0(opcional), no semestre do plano curricular do curso.\nPrimeiramente deve-se usar o comando \"CD [semestre] [prioridade] [curso]\", posteriormente \"- > [numero-de-creditos] [disciplina], por fim as ultimas quatro interacoes para um unico topico \"[topicoN]",
     "args": [
       {
         "name": "semestre",
         "argRegex": "^\\d{1,2}$",
-        "description": "Número do semestre (1-12)"
+        "description": "Número do semestre (1-10)"
       },
       {
         "name": "tipo",
-        "argRegex": "^(obrigatória|optativa)$",
-        "description": "Tipo da disciplina (obrigatória ou optativa)"
+        "argRegex": "^(1|0)$",
+        "description": "Tipo da disciplina obrigatória(1) ou optativa(0)"
       },
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       },
       {
-        "name": "número-de-créditos",
+        "name": "numero-de-creditos",
         "argRegex": "^\\d{1,2}$",
-        "description": "Número de créditos (1-12)"
+        "description": "Numero de creditos (0.5-30)"
       },
       {
         "name": "disciplina",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome da disciplina (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome da disciplina (maximo 60 caracteres)"
       },
       {
-        "name": "tópico1",
-        "argRegex": "^.{1,50}$",
-        "description": "Tópico 1 (máximo 50 caracteres)"
+        "name": "topico1",
+        "argRegex": "^.{1,60}$",
+        "description": "Topico 1 (maximo 60 caracteres)"
       },
       {
-        "name": "tópico2",
-        "argRegex": "^.{1,50}$",
-        "description": "Tópico 2 (máximo 50 caracteres)"
+        "name": "topico2",
+        "argRegex": "^.{1,60}$",
+        "description": "Topico 2 (maximo 60 caracteres)"
       },
       {
-        "name": "tópico3",
-        "argRegex": "^.{1,50}$",
-        "description": "Tópico 3 (máximo 50 caracteres)"
+        "name": "topico3",
+        "argRegex": "^.{1,60}$",
+        "description": "Topico 3 (maximo 60 caracteres)"
       },
       {
-        "name": "tópico4",
-        "argRegex": "^.{1,50}$",
-        "description": "Tópico 4 (máximo 50 caracteres)"
+        "name": "topico4",
+        "argRegex": "^.{1,60}$",
+        "description": "Topico 4 (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "PD",
-    "description": null,
+    "description": "Permite a pesquisa informacoes associadas a disciplina",
     "args": [
       {
         "name": "disciplina",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome da disciplina (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome da disciplina (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "DT",
-    "description": null,
+    "description": "Permite que pesquise disciplinas que estejam associadas a um topico",
     "args": [
       {
-        "name": "tópico",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do tópico (máximo 50 caracteres)"
+        "name": "topico",
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do topico (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "ID",
-    "description": null,
+    "description": "Insere uma disciplina a um plano curricular\nPrimeiramente deve executar o seguinte comando: \" ID [semestre] [tipo] [curso]\", posteriormente adicione a disciplina \" - > [disciplina]",
     "args": [
       {
         "name": "semestre",
-        "argRegex": "^\\d{1,2}$",
-        "description": "Número do semestre (1-12)"
+        "argRegex": "^\\d{1,10}$",
+        "description": "Número do semestre (1-10)"
       },
       {
         "name": "tipo",
@@ -110,46 +110,46 @@
       },
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       },
       {
         "name": "disciplina",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome da disciplina (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome da disciplina (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "RD",
-    "description": null,
+    "description": "Remove  a associacao entre uma disciplina e um planos curricular, caso a disciplina pertenca a so um plano curricular, a alem da associacao, a disciplina tambem sera removida.\nPrimeiramente insira o seguinte comando \"RD [curso]\"  e posteriormente insira a disciplina \" - >[disciplina]\"",
     "args": [
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       },
       {
         "name": "disciplina",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome da disciplina (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome da disciplina (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "PP",
-    "description": null,
+    "description": "Permite a pesquisa de plano curricular de um determinado curso.",
     "args": [
       {
         "name": "curso",
-        "argRegex": "^.{1,50}$",
-        "description": "Nome do curso (máximo 50 caracteres)"
+        "argRegex": "^.{1,60}$",
+        "description": "Nome do curso (maximo 60 caracteres)"
       }
     ]
   },
   {
     "prefix": "help",
-    "description": "Exibe resumos breves dos comandos embutidos. Se PADRÃO for especificado, fornece ajuda detalhada sobre todos os comandos que correspondem ao PADRÃO, caso contrário, a lista de tópicos de ajuda é exibida.",
+    "description": "Exibe resumos breves dos comandos embutidos. Se PADRAO for especificado, fornece ajuda detalhada sobre todos os comandos que correspondem ao PADRAO, caso contrario, a lista de topicos de ajuda e exibida.",
     "args": []
   },
   {
@@ -160,6 +160,11 @@
   {
     "prefix": "clear",
     "description": "Limpa o console",
+    "args": []
+  },
+  {
+    "prefix": "test",
+    "description": "Entra em modo de teste. E um modo exclusivo no qual ele faz um teste e2e, onde ele recebe diversos comandos para analisar o comportamento da aplicação.",
     "args": []
   }
 ]

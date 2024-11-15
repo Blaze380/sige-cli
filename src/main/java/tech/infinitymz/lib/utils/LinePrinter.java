@@ -3,7 +3,13 @@ package tech.infinitymz.lib.utils;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Color;
 
+import tech.infinitymz.App;
+import tech.infinitymz.services.TestService;
+import tech.infinitymz.services.TestService.Logs;
+
 public class LinePrinter {
+    public static boolean isLoading = false;
+
     public static void print(String s) {
         System.out.print(s);
     }
@@ -21,26 +27,62 @@ public class LinePrinter {
     }
 
     public static void info(String msg) {
-        println(Ansi.ansi().fgBrightBlue().a("INFO: ").reset().a(msg).toString());
+        Logs.log = msg = Ansi.ansi().fgBrightBlue().a("INFO: ").reset().a(msg).toString();
+        if (Logs.hasStartedTesting)
+            ++Logs.infos;
+        if (App.canPrintInTestMode)
+            println(msg);
     }
 
     public static void warn(String msg) {
-        println(Ansi.ansi().fgYellow().a("AVISO: ").reset().a(msg).toString());
+        Logs.log = msg = Ansi.ansi().fgYellow().a("AVISO: ").reset().a(msg).toString();
+        if (Logs.hasStartedTesting)
+            ++Logs.warns;
+        if (App.canPrintInTestMode)
+            println(msg);
     }
 
     public static void error(String msg) {
-        println(Ansi.ansi().fgBrightRed().a("ERRO: ").reset().a(msg).toString());
+        Logs.log = msg = Ansi.ansi().fgBrightRed().a("ERRO: ").reset().a(msg).toString();
+        if (Logs.hasStartedTesting)
+            ++Logs.errors;
+        if (App.canPrintInTestMode)
+            println(msg);
         ;
+    }
+
+    public static String loadingLoop(String m) {
+        while (isLoading) {
+            System.out.print("\r" + m);
+            for (int i = 0; i < 3; i++) {
+                System.out.print(".");
+                sleep(500);
+            }
+        }
+        return m;
+    }
+
+    public static void sleep(int n) {
+        try {
+            Thread.sleep(n);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static String getColored(String msg, Color c) {
         return Ansi.ansi().fg(c).a(msg).reset().toString();
     }
 
+    public static String getBgColored(String msg, Color c) {
+        return Ansi.ansi().bg(c).a(msg).reset().toString();
+    }
+
     public static void cmdNotFoundMsg(String cmd) {
         error(Ansi.ansi()
-                .a(" Comando nao encontrado: " + (cmd == null ? getColored(cmd, Color.MAGENTA) : "")
-                        + "\nUse o comando ")
+                .a("Comando nao encontrado: " + (cmd != null ? getColored(cmd, Color.MAGENTA) : "")
+                        + "! Use o comando ")
                 .fgBrightMagenta()
                 .a("help")
                 .reset()
@@ -48,13 +90,13 @@ public class LinePrinter {
     }
 
     public static void syntaxError(String cmd, String reason) {
-        error(reason + "\nTente " + getColored(cmd, Color.MAGENTA) + getColored(" --help", Color.MAGENTA)
+        error(reason + "! Tente " + getColored(cmd, Color.MAGENTA) + getColored(" --help", Color.MAGENTA)
                 + "  ou " + getColored("help", Color.MAGENTA) + " para mais informacoes.");
     }
 
     public static void syntaxError(String cmd) {
         error(
-                "Erro de sintaxe!\nTente " + getColored(cmd, Color.MAGENTA) + getColored(" --help", Color.MAGENTA)
+                "Erro de sintaxe! Tente " + getColored(cmd, Color.MAGENTA) + getColored(" --help", Color.MAGENTA)
                         + "  ou " + getColored("help", Color.MAGENTA) + " para mais informacoes.");
     }
 

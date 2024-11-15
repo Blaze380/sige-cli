@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SubjectPriority {
-    OPTIONAL(10), OBLIGATORY(1);
+    OPTIONAL(0), OBLIGATORY(1);
 
     private int priority;
 }

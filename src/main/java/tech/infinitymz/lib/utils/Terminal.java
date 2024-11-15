@@ -1,13 +1,19 @@
 package tech.infinitymz.lib.utils;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Scanner;
 
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Color;
 import org.jline.reader.LineReader.SuggestionType;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.TerminalBuilder;
+
+import tech.infinitymz.App;
 
 public class Terminal {
 
@@ -15,6 +21,7 @@ public class Terminal {
     private static Scanner scanner;
     private static org.jline.terminal.Terminal terminal;
     private static org.jline.reader.LineReader reader;
+    private static PipedOutputStream commandWriter;
 
     public static void create() {
         try {
@@ -24,6 +31,24 @@ public class Terminal {
             LinePrinter.println(Ansi.ansi().fgRed().a("ERRO! ").reset().a("Erro ao criar o terminal.\nFechando..."));
             System.exit(1);
         }
+    }
+
+    public static void simulateCommand(String cmd) throws IOException, InterruptedException {
+        Thread.sleep(10);
+        commandWriter.write((cmd + "\n").getBytes());
+        commandWriter.flush();
+    }
+
+    public static void rebuildTerminalInTestMode() throws IOException {
+        // TestOutputStream
+        PipedInputStream testInput = new PipedInputStream();
+        commandWriter = new PipedOutputStream(testInput);
+        reader = LineReaderBuilder
+                .builder()
+                .terminal(TerminalBuilder
+                        .builder()
+                        .streams(testInput, new TestOutputStream()).build())
+                .build();
     }
 
     private static void buildTerminal() throws IOException {
@@ -38,6 +63,10 @@ public class Terminal {
 
         reader.setAutosuggestion(SuggestionType.HISTORY);
 
+    }
+
+    public static String readGeneric(String m) {
+        return reader.readLine(m);
     }
 
     public static String readLine() {
@@ -56,20 +85,8 @@ public class Terminal {
                             .toString());
 
         } catch (UserInterruptException e) {
-            LinePrinter.println(Ansi
-                    .ansi()
-                    .fgBrightRed()
-                    .a("ERRO! ")
-                    .reset()
-                    .a("Para sair use o ")
-                    .fgBrightMagenta()
-                    .a("exit")
-                    .reset()
-                    .a(" ou ")
-                    .fgBrightMagenta()
-                    .a("help")
-                    .reset()
-                    .a(" para mais informações"));
+            LinePrinter.error("Para sair use o" + LinePrinter.getColored("exit", Color.MAGENTA) + " ou "
+                    + LinePrinter.getColored("help", Color.MAGENTA) + " para mais informacoes");
         }
         return null;
     }
@@ -89,7 +106,7 @@ public class Terminal {
                         .waitFor();
 
         } catch (Exception e) {
-            LinePrinter.println(Ansi.ansi().fgRed().a("ERRO! ").reset().a("Erro ao limpar o console."));
+            LinePrinter.error("Erro ao limpar o console.");
         }
     }
 
@@ -98,13 +115,34 @@ public class Terminal {
         return str;
     }
 
+    @Deprecated
     public static double readDouble() {
         final double dbl = scanner.nextDouble();
         return dbl;
     }
 
+    @Deprecated
     public static double readInteger() {
         final int inT = scanner.nextInt();
         return inT;
+    }
+
+    static class TestOutputStream extends OutputStream {
+
+        @Override
+        public void write(int b) throws IOException {
+
+        }
+
+        @Override
+        public void write(byte[] b) throws IOException {
+
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+
+        }
+
     }
 }

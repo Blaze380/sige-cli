@@ -6,11 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
-
 import tech.infinitymz.lib.utils.LinePrinter;
-import tech.infinitymz.lib.utils.Terminal;
 
 public class SyntaxCheckerService {
     private static OperationsService operations;
@@ -18,7 +14,8 @@ public class SyntaxCheckerService {
     /**
      * Carrega os comandos na memória
      *
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException - se não existir nenhum arquivo de comandos
+     *                               salvo
      */
     public static void loadCommands() throws FileNotFoundException {
         if (operations == null)
@@ -32,23 +29,42 @@ public class SyntaxCheckerService {
      * @param cmd
      */
     public static void eval(String cmd) {
-
+        // LinePrinter.println("Evaluating: " + cmd);
         if (checkQuotes(cmd) % 2 != 0) {
             LinePrinter.cmdNotFoundMsg(cmd);
             return;
         }
 
         List<String> commandParts = getCommands(cmd);
+        /**
+         * Caso seja igual a nul o objeto, quer dizer que o usuário simplesmente deu
+         * enter sem inserir nenhum comando
+         */
         if (commandParts == null)
             return;
-        if (commandParts.size() == 1)
-            checkSingleCommand(commandParts.get(0));
-        else if (commandParts.size() > 1) {
 
-            String prefix = commandParts.get(0);
-            String[] args = commandParts.subList(1, commandParts.size()).toArray(new String[0]);
+        // LinePrinter.println("Command parts: " + commandParts.toString());
+        if (commandParts.size() == 0) {
+            if (cmd.equals(""))
+                return;
+            if (cmd.length() > 0) {
+                LinePrinter.cmdNotFoundMsg(cmd);
+                return;
+            }
+            throw new IllegalStateException(
+                    "This is an unexpected error because the syntax checker didn't get any command on " + cmd
+                            + " and it can be an unknown symbol");
+        }
+        /**
+         * Divide o prefixo e os argumentos do comando
+         */
+        String prefix = commandParts.get(0);
+        String[] args = commandParts.subList(1, commandParts.size()).toArray(new String[0]);
+        for (int i = 0; i < args.length; i++)
+            args[i] = args[i].toLowerCase();
+
+        if (commandParts.size() > 0) {
             executeCommand(prefix, args);
-        } else if (commandParts.size() == 0) {
         } else
             LinePrinter.cmdNotFoundMsg(cmd);
 
@@ -93,8 +109,18 @@ public class SyntaxCheckerService {
         return commandParts;
     }
 
+    /**
+     * Permite a execução da operação pretendida pelo comando, retorna uma mensagem
+     * de erro caso o comando não pertence ao shell
+     *
+     * @param cmd  - prefixo do comando
+     * @param args - argumentos do comando
+     */
     private static void executeCommand(String cmd, String[] args) {
 
+        if (operations == null)
+            throw new IllegalStateException(
+                    "It can not execute operations because the commands was not loaded. user loadCommands() methods first");
         switch (cmd) {
             case "CC":
                 operations.createCourse(cmd, args);
@@ -121,29 +147,17 @@ public class SyntaxCheckerService {
                 operations.searchCurriculumPlan(cmd, args);
                 break;
 
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Verifica se são comandos do sistema e os executa
-     *
-     * @param cmd
-     */
-    private static void checkSingleCommand(String cmd) {
-        switch (cmd) {
             case "help":
-                // TODO coloca o sistema de help
-                LinePrinter.info("Ajuda....");
+                operations.printAllCommands(cmd, args);
                 break;
             case "exit":
-                LinePrinter.info("Fechando...");
-                AnsiConsole.systemUninstall();
-                System.exit(0);
+                operations.exitProgram(cmd, args);
                 break;
             case "clear":
-                Terminal.clear();
+                operations.clearTerminal(cmd, args);
+                break;
+            case "test":
+                operations.testApp(cmd, args);
                 break;
             default:
                 if (operations.getCommands().find(cmd) != null) {
@@ -154,5 +168,7 @@ public class SyntaxCheckerService {
                     LinePrinter.cmdNotFoundMsg(cmd);
                 break;
         }
+        // LinePrinter.println("Comando executado");
     }
+
 }

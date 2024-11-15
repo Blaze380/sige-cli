@@ -6,10 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import tech.infinitymz.lib.collections.LinkedList;
 
 public class FileBuffer {
     public final static String RESOURCE_PATH = "resource";
     public final static String COMMANDS_FILE = "commands.json";
+    public final static String TEST_COMMANDS_FILE = "test_file.txt";
 
     /**
      * Creates a file, nothing else to say LOL
@@ -25,6 +30,7 @@ public class FileBuffer {
         try (FileWriter file = new FileWriter(filePath + File.separator + fileName);) {
             file.write(fileContent);
         } catch (IOException e) {
+            LinePrinter.error("Creating file" + fileName + "!");
         }
     }
 
@@ -88,10 +94,30 @@ public class FileBuffer {
                 userData += line;
             }
         } catch (IOException e) {
-            System.out.println("Erro na leitura de dados!");
+            LinePrinter.error("Erro na leitura de dados!");
         }
 
         return userData;
+    }
+
+    public static List<String> readCommands() throws FileNotFoundException {
+        final String fileSeparator = "/";
+        String file = fileSeparator + TEST_COMMANDS_FILE;
+        final FileReader fileReader = getFileReader(createDirectoryPath(RESOURCE_PATH), file);
+        final BufferedReader linReader = getBufferedReader(fileReader);
+
+        List<String> commands = new ArrayList<>();
+        try {
+            String line = "";
+            while ((line = linReader.readLine()) != null) {
+                if (!line.isEmpty() || !line.equals("") || !line.equals(""))
+                    commands.add(line);
+            }
+        } catch (IOException e) {
+            LinePrinter.error("Erro na leitura de dados!");
+        }
+
+        return commands;
     }
 
 }
